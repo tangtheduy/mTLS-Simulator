@@ -11,7 +11,7 @@
         
         .packet {
             position: absolute;
-            transition: all 2s ease-in-out; /* Làm chậm animation từ 1s thành 2s */
+            transition: all 2s ease-in-out;
             opacity: 0;
             z-index: 10;
         }
@@ -52,25 +52,25 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col w-full h-full min-h-[750px] overflow-x-hidden">
+<body class="bg-gray-50 text-gray-800 flex flex-col w-full min-h-screen m-0 overflow-x-hidden box-border">
 
-<header class="bg-blue-900 text-white p-3 shadow-md">
-    <div class="container mx-auto flex justify-between items-center">
+<header class="bg-blue-900 text-white p-3 shadow-md w-full">
+    <div class="w-full px-4 mx-auto flex justify-between items-center max-w-7xl">
         <h1 class="text-xl font-bold tracking-tight">IBM API Connect: mTLS Simulator</h1>
-        <div class="text-xs font-medium opacity-80">Interactive Learning Tool</div>
+        <div class="text-xs font-medium opacity-80 hidden sm:block">Interactive Learning Tool</div>
     </div>
 </header>
 
-<main class="container mx-auto flex-grow p-3 md:p-4 flex flex-col lg:flex-row gap-4">
+<main class="w-full max-w-7xl mx-auto flex-grow p-3 flex flex-col md:flex-row gap-4">
 
-    <div class="w-full lg:w-1/3 flex flex-col gap-4">
-        <!-- Control Panel -->
+    <!-- Control Panel (Nhảy xuống dưới nếu màn hình hẹp) -->
+    <div class="w-full md:w-[35%] lg:w-[30%] flex flex-col gap-4 order-2 md:order-1">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <h2 class="text-md font-semibold mb-3 text-gray-800 border-b pb-2">Điều khiển mô phỏng</h2>
             
             <div class="flex flex-col gap-2">
                 <button id="btn-inbound" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex justify-between items-center w-full shadow-sm text-sm">
-                    <span>1. Mô phỏng Inbound mTLS</span>
+                    <span>1. Mô phỏng Inbound</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
                     </svg>
@@ -78,14 +78,13 @@
                 <div class="text-[11px] text-gray-500 ml-1 mb-1">Client đến API Gateway</div>
 
                 <button id="btn-outbound" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex justify-between items-center w-full mt-1 shadow-sm text-sm" disabled style="opacity: 0.5;">
-                    <span>2. Mô phỏng Outbound mTLS</span>
+                    <span>2. Mô phỏng Outbound</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
                 <div class="text-[11px] text-gray-500 ml-1">API Gateway đến Backend</div>
                 
-                <!-- Step Control Area -->
                 <div class="mt-2 p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col gap-2">
                     <label class="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer">
                         <input type="checkbox" id="cb-autoplay" class="form-checkbox h-3 w-3 text-blue-600 rounded transition duration-150 ease-in-out">
@@ -107,95 +106,88 @@
         </div>
 
         <!-- Log Panel -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-0 flex flex-col h-64 lg:h-[350px] overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-0 flex flex-col h-48 md:h-[350px] overflow-hidden">
             <div class="bg-gray-100 p-2 border-b border-gray-200 flex justify-between items-center">
                 <h2 class="text-xs font-semibold text-gray-700 uppercase tracking-wider">Trạng thái Handshake</h2>
                 <span id="step-counter" class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full hidden">Bước 0/6</span>
             </div>
             <div id="log-container" class="p-2 overflow-y-auto flex-grow bg-slate-50 text-[11px] font-mono flex flex-col gap-1.5">
                 <div class="text-gray-400 italic">Nhấn nút "Mô phỏng Inbound mTLS" để bắt đầu...</div>
-                <!-- Logs will be injected here -->
             </div>
         </div>
     </div>
 
-    <div class="w-full lg:w-2/3 bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden flex flex-col">
+    <!-- Diagram Panel (Nhảy lên trên cùng nếu màn hình hẹp) -->
+    <div class="w-full md:w-[65%] lg:w-[70%] bg-white rounded-xl shadow-sm border border-gray-200 p-2 md:p-4 relative overflow-hidden flex flex-col order-1 md:order-2">
         <h2 class="text-lg font-bold mb-4 text-center text-gray-800" id="sim-title">Sơ đồ Kiến trúc mTLS</h2>
         
-        <!-- Sơ đồ mạng -->
-        <div class="relative flex-grow flex items-center justify-between px-2 md:px-8 py-6 min-h-[200px]">
+        <div class="relative flex-grow flex items-center justify-between px-2 md:px-8 py-6 min-h-[220px]">
             
-            <!-- SVG Paths connecting nodes -->
             <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
-                <!-- Client to Gateway line -->
                 <line x1="15%" y1="50%" x2="50%" y2="50%" stroke="#CBD5E1" stroke-width="4" id="line-inbound" />
                 <line x1="15%" y1="50%" x2="50%" y2="50%" stroke="#3B82F6" stroke-width="4" class="line-dash opacity-0" id="line-inbound-active" />
                 
-                <!-- Gateway to Backend line -->
                 <line x1="50%" y1="50%" x2="85%" y2="50%" stroke="#CBD5E1" stroke-width="4" id="line-outbound" />
                 <line x1="50%" y1="50%" x2="85%" y2="50%" stroke="#4F46E5" stroke-width="4" class="line-dash opacity-0" id="line-outbound-active" />
             </svg>
 
-            <!-- Packet Elements -->
             <div id="packet-obj" class="packet bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
                 Message
             </div>
 
             <!-- Client Node -->
-            <div class="relative z-20 flex flex-col items-center" id="node-client" style="left: 0;">
-                <div class="bg-white border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center shadow-md transition-all duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="relative z-20 flex flex-col items-center w-1/3" id="node-client">
+                <div class="bg-white border-4 border-gray-300 rounded-full w-14 h-14 md:w-20 md:h-20 flex items-center justify-center shadow-md transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-10 md:w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <div class="mt-3 font-bold text-gray-700">Client App</div>
-                <div class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded mt-1 border border-gray-200 text-center">
-                    <div class="font-mono text-[10px]">Client Cert</div>
-                    <div class="font-mono text-[8px] text-emerald-600">(Signed by Internal RootCA)</div>
+                <div class="mt-2 font-bold text-gray-700 text-xs md:text-base text-center">Client App</div>
+                <div class="text-[9px] md:text-xs text-gray-500 bg-gray-100 px-1 py-1 rounded mt-1 border border-gray-200 text-center w-full max-w-[100px]">
+                    <div class="font-mono">Client Cert</div>
+                    <div class="text-[7px] md:text-[8px] text-emerald-600">(Internal RootCA)</div>
                 </div>
             </div>
 
             <!-- APIC Gateway Node -->
-            <div class="relative z-20 flex flex-col items-center" id="node-gateway" style="left: 0;">
-                <div class="bg-white border-4 border-blue-400 rounded-xl w-24 h-24 flex items-center justify-center shadow-lg transition-all duration-300 glow">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="relative z-20 flex flex-col items-center w-1/3" id="node-gateway">
+                <div class="bg-white border-4 border-blue-400 rounded-xl w-16 h-16 md:w-24 md:h-24 flex items-center justify-center shadow-lg transition-all duration-300 glow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-12 md:w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                 </div>
-                <div class="mt-3 font-bold text-blue-800">API Gateway</div>
-                <div class="flex gap-2 mt-1">
-                    <div class="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded border border-blue-200 text-center">
-                        <div class="font-semibold text-blue-700 text-[10px]">Keystore</div>
-                        <div class="font-mono text-[9px]">(Server & Client Certs)</div>
-                        <div class="font-mono text-[8px] text-emerald-600">(Signed by Internal RootCA)</div>
+                <div class="mt-2 font-bold text-blue-800 text-xs md:text-base text-center">API Gateway</div>
+                <div class="flex flex-col md:flex-row gap-1 mt-1">
+                    <div class="text-[9px] md:text-xs text-gray-500 bg-blue-50 px-1 py-1 rounded border border-blue-200 text-center">
+                        <div class="font-semibold text-blue-700">Keystore</div>
+                        <div class="font-mono text-[7px] md:text-[8px]">(Certs)</div>
                     </div>
-                    <div class="text-xs text-gray-500 bg-green-50 px-2 py-1 rounded border border-green-200 text-center">
-                        <div class="font-semibold text-green-700 text-[10px]">Truststore</div>
-                        <div class="font-mono text-[9px]">(Internal RootCA)</div>
+                    <div class="text-[9px] md:text-xs text-gray-500 bg-green-50 px-1 py-1 rounded border border-green-200 text-center">
+                        <div class="font-semibold text-green-700">Truststore</div>
+                        <div class="font-mono text-[7px] md:text-[8px]">(Internal RootCA)</div>
                     </div>
                 </div>
             </div>
 
             <!-- Backend Node -->
-            <div class="relative z-20 flex flex-col items-center" id="node-backend" style="left: 0;">
-                <div class="bg-white border-4 border-gray-300 rounded-lg w-20 h-20 flex items-center justify-center shadow-md transition-all duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="relative z-20 flex flex-col items-center w-1/3" id="node-backend">
+                <div class="bg-white border-4 border-gray-300 rounded-lg w-14 h-14 md:w-20 md:h-20 flex items-center justify-center shadow-md transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-10 md:w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
                     </svg>
                 </div>
-                <div class="mt-3 font-bold text-gray-700">Backend Server</div>
-                <div class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded mt-1 border border-gray-200 text-center">
-                    <div class="font-mono text-[10px]">Server Cert</div>
-                    <div class="font-mono text-[8px] text-emerald-600">(Signed by Internal RootCA)</div>
+                <div class="mt-2 font-bold text-gray-700 text-xs md:text-base text-center">Backend</div>
+                <div class="text-[9px] md:text-xs text-gray-500 bg-gray-100 px-1 py-1 rounded mt-1 border border-gray-200 text-center w-full max-w-[100px]">
+                    <div class="font-mono">Server Cert</div>
+                    <div class="text-[7px] md:text-[8px] text-emerald-600">(Internal RootCA)</div>
                 </div>
             </div>
             
         </div>
 
-        <!-- Hộp giải thích (Explanation Box) -->
-        <div class="mt-4 bg-blue-50 rounded-lg p-4 border border-blue-200 min-h-[120px] shadow-inner transition-opacity duration-300" id="explanation-box">
+        <div class="mt-4 bg-blue-50 rounded-lg p-3 md:p-4 border border-blue-200 min-h-[110px] shadow-inner transition-opacity duration-300" id="explanation-box">
             <h3 class="font-semibold text-blue-800 mb-1 flex items-center text-sm md:text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 mr-1.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Chi tiết Bước hiện tại
@@ -208,15 +200,13 @@
 </main>
 
 <script>
-    // State management
     const state = {
         isAnimating: false,
         inboundComplete: false,
         outboundComplete: false,
-        currentRunId: 0 // Để hủy các luồng cũ nếu người dùng nhấn Reset giữa chừng
+        currentRunId: 0 
     };
 
-    // DOM Elements
     const btnInbound = document.getElementById('btn-inbound');
     const btnOutbound = document.getElementById('btn-outbound');
     const btnReset = document.getElementById('btn-reset');
@@ -229,22 +219,15 @@
     const simTitle = document.getElementById('sim-title');
     const stepCounter = document.getElementById('step-counter');
     
-    // Nodes
     const nodeClient = document.getElementById('node-client');
     const nodeGateway = document.getElementById('node-gateway');
     const nodeBackend = document.getElementById('node-backend');
     
-    // Lines
     const lineInboundActive = document.getElementById('line-inbound-active');
     const lineOutboundActive = document.getElementById('line-outbound-active');
     
-    // Packet
     const packet = document.getElementById('packet-obj');
-
-    // Cờ resolve Promise cho nút "Tiếp theo"
     let resolveNextStep = null;
-
-    // --- HELPER FUNCTIONS --- //
 
     function addLog(message, isSender = true, role = 'client') {
         const div = document.createElement('div');
@@ -253,12 +236,7 @@
             role === 'server' ? 'bg-blue-50 border-blue-200 text-blue-800 mr-4 border-r-4 border-r-indigo-400' :
             'bg-green-50 border-green-200 text-green-800 text-center font-semibold'
         }`;
-        
-        let prefix = '';
-        if (role !== 'system') {
-            prefix = `<span class="font-bold opacity-70">${isSender ? 'Gửi' : 'Nhận'}:</span> `;
-        }
-        
+        let prefix = role !== 'system' ? `<span class="font-bold opacity-70">${isSender ? 'Gửi' : 'Nhận'}:</span> ` : '';
         div.innerHTML = `${prefix}${message}`;
         logContainer.appendChild(div);
         logContainer.scrollTop = logContainer.scrollHeight;
@@ -267,7 +245,6 @@
     function updateExplanation(title, content) {
         explanationBox.classList.remove('opacity-100');
         explanationBox.classList.add('opacity-0');
-        
         setTimeout(() => {
             explanationText.innerHTML = `<strong>${title}</strong><br/>${content}`;
             explanationBox.classList.remove('opacity-0');
@@ -285,38 +262,24 @@
         stepCounter.classList.add('hidden');
     }
 
-    // Hàm chờ người dùng bấm "Tiếp theo" hoặc đợi nếu "Tự động" đang bật
     async function waitStep(runId) {
-        if (runId !== state.currentRunId) throw new Error("aborted"); // Hủy nếu đã bấm reset
-        
+        if (runId !== state.currentRunId) throw new Error("aborted"); 
         if (cbAutoplay.checked) {
-            // Chế độ tự động: Đợi 2.5s để người dùng kịp đọc
             await new Promise(r => setTimeout(r, 2500));
         } else {
-            // Chế độ thủ công: Đợi bấm nút Next
             btnNext.disabled = false;
             btnNext.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-emerald-500');
             btnNext.classList.add('animate-pulse', 'bg-emerald-600', 'hover:bg-emerald-700');
-            
-            await new Promise(resolve => {
-                resolveNextStep = resolve;
-            });
-            
-            // Tắt nút Next đi sau khi bấm
+            await new Promise(resolve => { resolveNextStep = resolve; });
             btnNext.disabled = true;
             btnNext.classList.add('opacity-50', 'cursor-not-allowed', 'bg-emerald-500');
             btnNext.classList.remove('animate-pulse', 'bg-emerald-600', 'hover:bg-emerald-700');
         }
-        
         if (runId !== state.currentRunId) throw new Error("aborted");
     }
 
-    // Lắng nghe sự kiện click nút "Tiếp theo"
     btnNext.addEventListener('click', () => {
-        if (resolveNextStep) {
-            resolveNextStep();
-            resolveNextStep = null;
-        }
+        if (resolveNextStep) { resolveNextStep(); resolveNextStep = null; }
     });
 
     function animatePacket(fromNode, toNode, message, colorClass, duration = 2000) {
@@ -330,7 +293,7 @@
             const endX = toRect.left - containerRect.left + (toRect.width / 2);
             const endY = toRect.top - containerRect.top + (toRect.height / 2) - 30;
 
-            packet.className = `packet ${colorClass} text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg whitespace-nowrap`;
+            packet.className = `packet ${colorClass} text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full shadow-lg whitespace-nowrap`;
             packet.innerText = message;
             
             packet.style.transition = 'none';
@@ -338,7 +301,7 @@
             packet.style.top = `${startY}px`;
             packet.style.transform = 'translate(-50%, -50%)';
             
-            void packet.offsetWidth; // Force reflow
+            void packet.offsetWidth;
 
             packet.style.transition = `all ${duration}ms ease-in-out`;
             packet.classList.add('packet-active');
@@ -354,19 +317,17 @@
 
     function highlightNode(node, colorBorderClass) {
         const circle = node.querySelector('div');
-        circle.className = `bg-white border-4 ${colorBorderClass} rounded-${node.id==='node-gateway'?'xl':'full'} w-${node.id==='node-gateway'?'24':'20'} h-${node.id==='node-gateway'?'24':'20'} flex items-center justify-center shadow-lg transition-all duration-300 glow`;
+        circle.className = `bg-white border-4 ${colorBorderClass} rounded-${node.id==='node-gateway'?'xl':'full'} w-16 h-16 md:w-${node.id==='node-gateway'?'24':'20'} md:h-${node.id==='node-gateway'?'24':'20'} flex items-center justify-center shadow-lg transition-all duration-300 glow`;
     }
     
     function resetNodeHighlight(node) {
         const circle = node.querySelector('div');
         if (node.id === 'node-client' || node.id === 'node-backend') {
-            circle.className = `bg-white border-4 border-gray-300 rounded-${node.id==='node-backend'?'lg':'full'} w-20 h-20 flex items-center justify-center shadow-md transition-all duration-300`;
+            circle.className = `bg-white border-4 border-gray-300 rounded-${node.id==='node-backend'?'lg':'full'} w-14 h-14 md:w-20 md:h-20 flex items-center justify-center shadow-md transition-all duration-300`;
         } else {
-            circle.className = `bg-white border-4 border-blue-400 rounded-xl w-24 h-24 flex items-center justify-center shadow-lg transition-all duration-300 glow`;
+            circle.className = `bg-white border-4 border-blue-400 rounded-xl w-16 h-16 md:w-24 md:h-24 flex items-center justify-center shadow-lg transition-all duration-300 glow`;
         }
     }
-
-    // --- MAIN SIMULATION LOGIC --- //
 
     async function runInboundSimulation() {
         if (state.isAnimating) return;
@@ -383,14 +344,12 @@
             highlightNode(nodeClient, 'border-blue-500');
             highlightNode(nodeGateway, 'border-indigo-500');
 
-            // --- BƯỚC 1 ---
             updateStepCounter(1);
             updateExplanation("Bước 1: Client Hello", "Client bắt đầu kết nối bằng cách gửi yêu cầu bắt tay TLS, kèm theo phiên bản TLS và các bộ mã hóa (cipher suites) mà nó hỗ trợ.");
             addLog("ClientHello (TLS Version, Ciphers)", true, 'client');
             await animatePacket(nodeClient, nodeGateway, "ClientHello", "bg-gray-600");
             await waitStep(runId);
 
-            // --- BƯỚC 2 ---
             updateStepCounter(2);
             updateExplanation("Bước 2: Server Hello & Certificate", "API Gateway chọn bộ mã hóa phù hợp và gửi lại <strong>Server Certificate</strong> (được ký bởi Internal RootCA). Client dễ dàng xác minh chứng chỉ này vì Client cũng tin tưởng cùng một Internal RootCA.");
             addLog("ServerHello (Selected Cipher)", true, 'server');
@@ -398,14 +357,12 @@
             await animatePacket(nodeGateway, nodeClient, "ServerHello + Cert", "bg-blue-600");
             await waitStep(runId);
 
-            // --- BƯỚC 3 ---
             updateStepCounter(3);
             updateExplanation("Bước 3: Certificate Request (Yêu cầu mTLS)", "Vì TLS Server Profile trên Gateway được cấu hình <strong>'Request Client Certificate'</strong>, Gateway gửi thêm một gói tin yêu cầu Client phải xuất trình chứng chỉ cá nhân của nó (đây là điểm cốt lõi của mTLS).");
             addLog("CertificateRequest (Need your Cert)", true, 'server');
             await animatePacket(nodeGateway, nodeClient, "CertRequest", "bg-indigo-600");
             await waitStep(runId);
 
-            // --- BƯỚC 4 ---
             updateStepCounter(4);
             updateExplanation("Bước 4: Client Gửi Certificate & Key Exchange", "Client xác minh chứng chỉ của Gateway (Bước 2) xong. Vì bị yêu cầu, Client liền gửi <strong>Client Certificate</strong> (cũng được ký bởi Internal RootCA) của mình lên Gateway kèm theo thông tin trao đổi khóa bí mật.");
             addLog("Certificate (Client Cert)", true, 'client');
@@ -413,28 +370,24 @@
             await animatePacket(nodeClient, nodeGateway, "Client Cert + Keys", "bg-gray-600");
             await waitStep(runId);
 
-            // --- BƯỚC 5 ---
             updateStepCounter(5);
             updateExplanation("Bước 5: Gateway Xác minh (Verify)", "Gateway nhận được chứng chỉ của Client, nó sẽ đối chiếu với <strong>Internal RootCA</strong> được lưu sẵn trong Truststore. Vì tất cả hệ thống dùng chung 1 CA, chứng chỉ hợp lệ ngay lập tức.");
             highlightNode(nodeGateway, 'border-green-500 success-glow');
-            await waitStep(runId); // Cho người dùng thấy hiệu ứng sáng xanh
+            await waitStep(runId); 
             
-            // --- BƯỚC 6 ---
             updateStepCounter(6);
             updateExplanation("Bước 6: Hoàn tất Handshake", "Cả hai bên xác nhận chuyển sang dùng khóa mã hóa đối xứng đã thống nhất. Bắt tay mTLS Inbound thành công.");
             addLog("ChangeCipherSpec, Finished", true, 'server');
             await animatePacket(nodeGateway, nodeClient, "Finished", "bg-green-600", 1500);
 
-            // Xong luồng Inbound
             addLog("Kết nối mTLS Inbound thiết lập THÀNH CÔNG", false, 'system');
             updateExplanation("Thành công! Đường truyền Inbound đã bảo mật.", "Bây giờ Client và Gateway đã tin tưởng lẫn nhau. Dữ liệu Request bắt đầu được mã hóa và truyền đi.");
             
-            await animatePacket(nodeClient, nodeGateway, "Encrypted HTTP GET /api", "bg-yellow-500", 2500);
+            await animatePacket(nodeClient, nodeGateway, "Encrypted HTTP GET", "bg-yellow-500", 2500);
 
             state.isAnimating = false;
             state.inboundComplete = true;
             
-            // Mở khóa cho nút Outbound
             btnOutbound.disabled = false;
             btnOutbound.style.opacity = '1';
             btnOutbound.classList.add('animate-pulse');
@@ -452,7 +405,7 @@
         
         try {
             clearLogs();
-            simTitle.innerText = "Luồng Outbound: API Gateway -> Backend Server";
+            simTitle.innerText = "Luồng Outbound: API Gateway -> Backend";
             btnOutbound.disabled = true;
             btnOutbound.style.opacity = '0.5';
             lineOutboundActive.classList.remove('opacity-0');
@@ -461,28 +414,24 @@
             highlightNode(nodeGateway, 'border-indigo-500');
             highlightNode(nodeBackend, 'border-purple-500');
 
-            // --- BƯỚC 1 ---
             updateStepCounter(1);
             updateExplanation("Bước 1: Gateway đóng vai trò Client", "Gateway nhận request từ Client xong, cần gọi xuống Backend. Lúc này Gateway đổi vai trò thành 'Client'. Nó gửi ClientHello y hệt như một ứng dụng bình thường.");
             addLog("ClientHello (TLS Version, Ciphers)", true, 'client');
             await animatePacket(nodeGateway, nodeBackend, "ClientHello", "bg-blue-600");
             await waitStep(runId);
 
-            // --- BƯỚC 2 ---
             updateStepCounter(2);
             updateExplanation("Bước 2: Backend Server Hello", "Backend Server chọn bộ mã hóa và gửi <strong>Server Certificate</strong> (được ký bởi Internal RootCA). Gateway kiểm tra danh tính Backend thành công nhờ Truststore chứa RootCA này.");
             addLog("ServerHello, Certificate (Backend Cert)", true, 'server');
             await animatePacket(nodeBackend, nodeGateway, "ServerHello + Cert", "bg-purple-600");
             await waitStep(runId);
 
-            // --- BƯỚC 3 ---
             updateStepCounter(3);
             updateExplanation("Bước 3: Backend yêu cầu chứng chỉ", "Vì Backend cũng được cấu hình mTLS, nó không cho ai gọi bừa bãi. Nó gửi yêu cầu Gateway phải xuất trình chứng chỉ Client.");
             addLog("CertificateRequest (Need your Cert)", true, 'server');
             await animatePacket(nodeBackend, nodeGateway, "CertRequest", "bg-pink-600");
             await waitStep(runId);
 
-            // --- BƯỚC 4 ---
             updateStepCounter(4);
             updateExplanation("Bước 4: Gateway xuất trình chứng chỉ", "Gateway xác minh xong Backend (nhờ Truststore). Sau đó, dựa vào <strong>TLS Client Profile</strong> cấu hình trong Invoke, nó trích xuất <strong>Client Certificate</strong> (được ký bởi Internal RootCA) gửi cho Backend.");
             addLog("Certificate (APIC Client Cert)", true, 'client');
@@ -490,24 +439,21 @@
             await animatePacket(nodeGateway, nodeBackend, "APIC Cert + Keys", "bg-blue-600");
             await waitStep(runId);
 
-            // --- BƯỚC 5 ---
             updateStepCounter(5);
             updateExplanation("Bước 5: Backend Xác minh Gateway", "Backend kiểm tra chứng chỉ của API Gateway. Khi nhận thấy chứng chỉ này được phát hành bởi cùng một <strong>Internal RootCA</strong> mà Backend tin tưởng, kết nối được phép thiết lập.");
             highlightNode(nodeBackend, 'border-green-500 success-glow');
             await waitStep(runId);
             
-            // --- BƯỚC 6 ---
             updateStepCounter(6);
             updateExplanation("Bước 6: Hoàn tất Handshake", "Bắt tay mTLS chặng Outbound thành công. Đường ống bảo mật thứ hai đã được thiết lập.");
             addLog("ChangeCipherSpec, Finished", true, 'server');
             await animatePacket(nodeBackend, nodeGateway, "Finished", "bg-green-600", 1500);
 
-            // Xong luồng Outbound
             addLog("Kết nối mTLS Outbound thiết lập THÀNH CÔNG", false, 'system');
             updateExplanation("Luồng End-to-End Hoàn tất!", "Mật mã hóa mTLS đã được thiết lập cho cả 2 chặng độc lập. Gateway bây giờ có thể chuyển tiếp (proxy) an toàn dữ liệu từ Client xuống Backend.");
             
             highlightNode(nodeGateway, 'border-green-500 success-glow');
-            await animatePacket(nodeGateway, nodeBackend, "Proxy: Encrypted HTTP Request", "bg-yellow-500", 2500);
+            await animatePacket(nodeGateway, nodeBackend, "Proxy: Encrypted HTTP", "bg-yellow-500", 2500);
 
             state.isAnimating = false;
             state.outboundComplete = true;
@@ -518,13 +464,11 @@
     }
 
     function resetSimulation() {
-        // Tăng runId để hủy các luồng đang chạy/đang chờ
         state.currentRunId++;
         state.isAnimating = false;
         state.inboundComplete = false;
         state.outboundComplete = false;
         
-        // Mở khóa promise nếu đang kẹt ở waitStep
         if (resolveNextStep) {
             resolveNextStep();
             resolveNextStep = null;
@@ -556,7 +500,6 @@
         packet.classList.remove('packet-active');
     }
 
-    // Gán sự kiện
     btnInbound.addEventListener('click', runInboundSimulation);
     btnOutbound.addEventListener('click', runOutboundSimulation);
     btnReset.addEventListener('click', resetSimulation);
